@@ -1,0 +1,41 @@
+---
+- name: make sure python-docker package is present
+  apt:
+    name: python-docker
+    state: present
+
+- name: make sure the diretory for text collectors exist
+  file:
+    path: "{{ node_exporter_text_collector_dir }}"
+    state: directory
+
+- name: run prometheus node exporter
+  docker_container:
+    name: "{{ node_exporter_container_name }}"
+    image: "{{ node_exporter_image }}:{{ node_exporter_image_version }}"
+    recreate: "{{node_exporter_container_recreate}}"
+    command: >
+      --path.procfs='/host/proc'
+      --path.sysfs='/host/sys'
+      --path.rootfs='/rootfs'
+      --collector.textfile.directory='{{node_exporter_text_collector_dir}}'
+      --collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc|rootfs/data/docker)($|/)
+      --collector.filesystem.ignored-fs-types=^(sysfs|proc|pstore|mqueue|devpts|devtmpfs|securityfs|fusectl|hugetlbfs|autofs|cgroup|configfs|debugfs|overlay|nsfs)$
+      --collector.interrupts
+      --collector.meminfo_numa
+      --collector.tcpstat
+      --collector.logind
+      --collector.ntp
+    restart_policy: always
+    security_opts:
+      - apparmor:unconfined
+    pull: yes
+    network_mode: host
+    ports:
+      - "9100:9100"
+    volumes:
+      - /:/rootfs:ro
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket:ro
+      - "{{node_exporter_text_collector_dir}}:{{ node_exporter_text_collector_dir }}:ro"

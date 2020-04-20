@@ -13,12 +13,12 @@
   docker_container:
     name: "{{ node_exporter_container_name }}"
     image: "{{ node_exporter_image }}:{{ node_exporter_image_version }}"
-    recreate: "{{node_exporter_container_recreate}}"
+    recreate: "{{ node_exporter_container_recreate }}"
     command: >
       --path.procfs='/host/proc'
       --path.sysfs='/host/sys'
       --path.rootfs='/rootfs'
-      --collector.textfile.directory='{{node_exporter_text_collector_dir}}'
+      --collector.textfile.directory='{{ node_exporter_text_collector_dir }}'
       --collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc|rootfs/data/docker)($|/)
       --collector.filesystem.ignored-fs-types=^(sysfs|proc|pstore|mqueue|devpts|devtmpfs|securityfs|fusectl|hugetlbfs|autofs|cgroup|configfs|debugfs|overlay|nsfs)$
       --collector.interrupts
@@ -38,4 +38,4 @@
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
       - /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket:ro
-      - "{{node_exporter_text_collector_dir}}:{{ node_exporter_text_collector_dir }}:ro"
+      - "{{ node_exporter_text_collector_dir }}:{{ node_exporter_text_collector_dir }}:ro"

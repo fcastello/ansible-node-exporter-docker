@@ -37,6 +37,10 @@ Example Playbook
       name: fcastello.node_exporter_docker
 ```
 
+Limitations
+-----------
+- Tested only in ubuntu 18.04 and 20.04
+
 
 License
 -------

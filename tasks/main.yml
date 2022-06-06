@@ -38,8 +38,6 @@
       - apparmor:unconfined
     pull: yes
     network_mode: host
-    ports:
-      - "9100:9100"
     volumes:
       - /:/rootfs:ro
       - /proc:/host/proc:ro

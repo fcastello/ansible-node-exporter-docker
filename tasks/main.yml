@@ -1,23 +1,24 @@
 ---
-- name: make sure python-docker package is present
-  apt:
+- name: Make sure python-docker package is present
+  ansible.builtin.apt:
     name: python-docker
     state: present
   when: ansible_lsb.major_release|int < 20
 
-- name: make sure python-docker package is present
-  apt:
+- name: Make sure python-docker package is present
+  ansible.builtin.apt:
     name: python3-docker
     state: present
   when: ansible_lsb.major_release|int >= 20
 
-- name: make sure the diretory for text collectors exist
-  file:
+- name: Make sure the diretory for text collectors exist
+  ansible.builtin.file:
     path: "{{ node_exporter_text_collector_dir }}"
     state: directory
+    mode: '0755'
 
-- name: run prometheus node exporter
-  docker_container:
+- name: Run prometheus node exporter
+  community.docker.docker_container:
     name: "{{ node_exporter_container_name }}"
     image: "{{ node_exporter_image }}:{{ node_exporter_image_version }}"
     recreate: "{{ node_exporter_container_recreate }}"
@@ -36,7 +37,7 @@
     restart_policy: always
     security_opts:
       - apparmor:unconfined
-    pull: yes
+    pull: true
     network_mode: host
     volumes:
       - /:/rootfs:ro
